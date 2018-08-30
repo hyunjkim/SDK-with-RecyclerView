@@ -9,16 +9,33 @@ The main reason about that is to not show blinking animation of view when it reb
 Then you should create your own `RecyclerView.ViewHolder`. The holder should have 4 methods:
 ```java
 // this method should be called when setting the player up or releasing it
-public void bindViewHolder(final Feed feed);
+public void bindViewHolder(final Object videoItem);
 // lifecycle methods for stopping and resuming 
 // playback when app goes backrgound / foreground 
 public void onResume(); 
 public void onPause();
 public void onDestroy();
 ```
-The main thing when implementing `JWPlayerView` with `RecyclerView` is not to forget about releasing player before player's view is still on the screen. So to make this happen you should call `stop()` before view is recycled. For this case you should calculate items position and stop playback if needed. 
+The main thing when implementing `JWPlayerView` with `RecyclerView` is not to forget about releasing player before player's view is still on the screen. So to make this happen you have to call `stop()` before view is recycled. For this case you should calculate items position and stop playback if needed. 
 
-You can see in `RecyclerView.OnScrollListener` that stops playback in case of any scroll event and after this event is finished and `RecyclerView` is in `IDLE` state, setup and start playback for the first visible item.
+In most cases only one `JWPlayerView` that is currentry focused should play content. To achive this behavior you can use `LinearLayoutManager` with its `findFirstCompletelyVisibleItemPosition()`.
+```java
+    private void calculateTopItemAndUpdateRecycler(RecyclerView recyclerView) {
+        LinearLayoutManager manager = (LinearLayoutManager) recyclerView.getLayoutManager();
+        updateList(manager.findFirstCompletelyVisibleItemPosition());
+    }
+
+    private void updateList(final int selectedPosition) {
+        if (mSelectedPosition != selectedPosition) {
+            mFeedAdapter.setPositions(selectedPosition);
+            //add payloads to not call animation
+            mFeedAdapter.notifyItemChanged(selectedPosition, FeedAdapter.ACTION_PLAY);
+            mFeedAdapter.notifyItemChanged(mSelectedPosition, FeedAdapter.ACTION_STOP);
+            mSelectedPosition = selectedPosition;
+        }
+    }
+```
+Implementation of `RecyclerView.OnScrollListener` that stops playback in case of any scroll event and after this event is finished and `RecyclerView` is in `IDLE` state, setup and start playback for the first visible item.
 ```java
 private class ScrollListener extends RecyclerView.OnScrollListener {
 
