@@ -9,7 +9,8 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final int FEED_SIZE = 100;
+    private final static String EXTRA_POSITION = "extra_pos_";
+
     private RecyclerView mRecyclerView;
     private ScrollListener mScrollListener;
     private int mSelectedPosition;
@@ -20,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         if (savedInstanceState != null) {
-            mSelectedPosition = savedInstanceState.getInt("pos");
+            mSelectedPosition = savedInstanceState.getInt(EXTRA_POSITION);
         }
         setupRecyclerView(mSelectedPosition);
     }
@@ -39,30 +40,34 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        updateListWithLifecycleEvent(FeedAdapter.ACTION_LIFECYCLE_DESTROY);
-        mRecyclerView.setAdapter(null);
-        mRecyclerView.removeOnScrollListener(mScrollListener);
-        mScrollListener = null;
+        destroyInstances();
         super.onDestroy();
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putInt("pos", mSelectedPosition);
+        outState.putInt(EXTRA_POSITION, mSelectedPosition);
         super.onSaveInstanceState(outState);
     }
 
     private void setupRecyclerView(int selectedPosition) {
         mScrollListener = new ScrollListener();
-        mFeedAdapter = createFeedAdapter(FEED_SIZE, selectedPosition);
+        mFeedAdapter = createFeedAdapter(selectedPosition);
         mRecyclerView = findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setAdapter(mFeedAdapter);
         mRecyclerView.addOnScrollListener(mScrollListener);
     }
 
-    private FeedAdapter createFeedAdapter(int feedListSize, int selectedPosition) {
-        List<Feed> feed = FeedGenerator.generateFeedList(feedListSize);
+    private void destroyInstances() {
+        updateListWithLifecycleEvent(FeedAdapter.ACTION_LIFECYCLE_DESTROY);
+        mRecyclerView.setAdapter(null);
+        mRecyclerView.removeOnScrollListener(mScrollListener);
+        mScrollListener = null;
+    }
+
+    private FeedAdapter createFeedAdapter(int selectedPosition) {
+        List<Feed> feed = FeedGenerator.generateFeedList();
         return new FeedAdapter(feed, selectedPosition);
     }
 
@@ -73,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateList(final int selectedPosition) {
         if (mSelectedPosition != selectedPosition) {
-            mFeedAdapter.setPositions(selectedPosition);
+            mFeedAdapter.setActivePosition(selectedPosition);
             //add payloads to not call animation
             mFeedAdapter.notifyItemChanged(selectedPosition, FeedAdapter.ACTION_PLAY);
             mFeedAdapter.notifyItemChanged(mSelectedPosition, FeedAdapter.ACTION_STOP);
@@ -96,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
 
             if (newState == RecyclerView.SCROLL_STATE_SETTLING
                     || newState == RecyclerView.SCROLL_STATE_DRAGGING) {
-                updateList(-1);
+                updateList(FeedAdapter.POSITION_NONE);
             }
         }
     }

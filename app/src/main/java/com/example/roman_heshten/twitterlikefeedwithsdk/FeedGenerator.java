@@ -5,6 +5,8 @@ import java.util.List;
 
 public class FeedGenerator {
 
+    private static final int DEFAULT_FEED_SIZE = 100;
+
     private final static String[] videoUrls = new String[]{
             "http://playertest.longtailvideo.com/adaptive/bipbop/gear4/prog_index.m3u8",
             "http://playertest.longtailvideo.com/jwpromo/jwpromo.m3u8",
@@ -23,6 +25,10 @@ public class FeedGenerator {
         }
 
         return feedList;
+    }
+
+    public static List<Feed> generateFeedList() {
+        return generateFeedList(DEFAULT_FEED_SIZE);
     }
 
 }

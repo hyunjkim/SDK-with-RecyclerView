@@ -8,7 +8,18 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
+/**
+ * Adapter that binds {@link FeedViewHolder}
+ *
+ * */
 public class FeedAdapter extends RecyclerView.Adapter<FeedViewHolder> {
+
+    /**
+     * Magic number
+     *
+     * Uses for un select currently focused position
+     * */
+    public static final int POSITION_NONE = -1;
 
     public static final String ACTION_PLAY = "play";
     public static final String ACTION_STOP = "stop";
@@ -63,8 +74,13 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedViewHolder> {
         return mFeedList.size();
     }
 
-    public void setPositions(int selectedPosition) {
-        mActivePosition = selectedPosition;
+    /**
+     * Sets active player position
+     *
+     * @param activePosition position of currently focused view
+     * */
+    public void setActivePosition(int activePosition) {
+        mActivePosition = activePosition;
     }
 
 }
