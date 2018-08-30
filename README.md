@@ -1,9 +1,9 @@
 # How to run app
 Open Manifest.xml and find meta-data block
 ```xml
-        <meta-data
-            android:name="JW_LICENSE_KEY"
-            android:value="YOUR_KEY" />
+<meta-data
+    android:name="JW_LICENSE_KEY"
+    android:value="YOUR_KEY" />
 ```
 1. Replace YOUR_KEY with your sdk key.
 2. Buid.
