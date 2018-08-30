@@ -48,7 +48,7 @@ private class ScrollListener extends RecyclerView.OnScrollListener {
 
             if (newState == RecyclerView.SCROLL_STATE_SETTLING
                     || newState == RecyclerView.SCROLL_STATE_DRAGGING) {
-                updateList(-1);
+                updateList(FeedAdapter.POSITION_NONE);
             }
         }
     }
