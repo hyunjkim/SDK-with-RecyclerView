@@ -27,7 +27,7 @@ In most cases only one `JWPlayerView` that is currentry focused should play cont
 
     private void updateList(final int selectedPosition) {
         if (mSelectedPosition != selectedPosition) {
-            mFeedAdapter.setPositions(selectedPosition);
+            mFeedAdapter.setActivePosition(selectedPosition);
             //add payloads to not call animation
             mFeedAdapter.notifyItemChanged(selectedPosition, FeedAdapter.ACTION_PLAY);
             mFeedAdapter.notifyItemChanged(mSelectedPosition, FeedAdapter.ACTION_STOP);
