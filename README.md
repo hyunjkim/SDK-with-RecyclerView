@@ -16,5 +16,24 @@ public void onResume();
 public void onPause();
 public void onDestroy();
 ```
-The main thing when implementing `JWPlayerView` with `RecyclerView` is not to forget about releasing player before player's view is still on the screen. So to make this happen you should call `stop()` before view is recycled. For this case you should calculate items position and stop playback if needed. You can see in demo app  `RecyclerView.OnScrollListener` that stops playback in case of any scroll event and after this event is finished and `RecyclerView` is in `IDLE` state, setup and start playback for first visible item.
+The main thing when implementing `JWPlayerView` with `RecyclerView` is not to forget about releasing player before player's view is still on the screen. So to make this happen you should call `stop()` before view is recycled. For this case you should calculate items position and stop playback if needed. 
+
+You can see in `RecyclerView.OnScrollListener` that stops playback in case of any scroll event and after this event is finished and `RecyclerView` is in `IDLE` state, setup and start playback for the first visible item.
+```java
+private class ScrollListener extends RecyclerView.OnScrollListener {
+
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
+            if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                calculateTopItemAndUpdateRecycler(recyclerView);
+            }
+
+            if (newState == RecyclerView.SCROLL_STATE_SETTLING
+                    || newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+                updateList(-1);
+            }
+        }
+    }
+```
 
