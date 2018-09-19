@@ -12,7 +12,7 @@ import java.util.List;
  * Adapter that binds {@link FeedViewHolder}
  *
  * */
-public class FeedAdapter extends RecyclerView.Adapter<FeedViewHolder> {
+public class FeedAdapter extends RecyclerView.Adapter<FeedViewHolder>{
 
     /**
      * Magic number
@@ -30,6 +30,7 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedViewHolder> {
     private List<Feed> mFeedList;
 
     private int mActivePosition;
+    private final String TAG = "HYUNJOO";
 
     FeedAdapter(List<Feed> feed, int activePosition) {
         mFeedList = feed;
@@ -45,9 +46,10 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(@NonNull FeedViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final FeedViewHolder holder, int position) {
         final boolean isActive = mActivePosition == holder.getAdapterPosition();
-        holder.bindViewHolder(mFeedList.get(position), isActive);
+        int selectedPosition = holder.getAdapterPosition();
+        holder.bindViewHolder(mFeedList.get(selectedPosition), isActive, selectedPosition);
     }
 
     @Override

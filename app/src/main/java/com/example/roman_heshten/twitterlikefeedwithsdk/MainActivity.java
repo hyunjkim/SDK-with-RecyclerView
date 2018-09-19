@@ -1,20 +1,24 @@
 package com.example.roman_heshten.twitterlikefeedwithsdk;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity{
 
     private final static String EXTRA_POSITION = "extra_pos_";
 
     private RecyclerView mRecyclerView;
-    private ScrollListener mScrollListener;
-    private int mSelectedPosition;
-    private FeedAdapter mFeedAdapter;
+//    private ScrollListener mScrollListener;
+    private static int mSelectedPosition;
+    private static FeedAdapter mFeedAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,20 +54,22 @@ public class MainActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void setupRecyclerView(int selectedPosition) {
-        mScrollListener = new ScrollListener();
+//        mScrollListener = new ScrollListener();
         mFeedAdapter = createFeedAdapter(selectedPosition);
         mRecyclerView = findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setAdapter(mFeedAdapter);
-        mRecyclerView.addOnScrollListener(mScrollListener);
+//        mRecyclerView.addOnScrollListener(mScrollListener);
+
     }
 
     private void destroyInstances() {
         updateListWithLifecycleEvent(FeedAdapter.ACTION_LIFECYCLE_DESTROY);
         mRecyclerView.setAdapter(null);
-        mRecyclerView.removeOnScrollListener(mScrollListener);
-        mScrollListener = null;
+//        mRecyclerView.removeOnScrollListener(mScrollListener);
+//        mScrollListener = null;
     }
 
     private FeedAdapter createFeedAdapter(int selectedPosition) {
@@ -73,13 +79,15 @@ public class MainActivity extends AppCompatActivity {
 
     private void calculateTopItemAndUpdateRecycler(RecyclerView recyclerView) {
         LinearLayoutManager manager = (LinearLayoutManager) recyclerView.getLayoutManager();
+
         updateList(manager.findFirstCompletelyVisibleItemPosition());
     }
 
-    private void updateList(final int selectedPosition) {
+    public static void updateList(final int selectedPosition) {
         if (mSelectedPosition != selectedPosition) {
             mFeedAdapter.setActivePosition(selectedPosition);
             //add payloads to not call animation
+
             mFeedAdapter.notifyItemChanged(selectedPosition, FeedAdapter.ACTION_PLAY);
             mFeedAdapter.notifyItemChanged(mSelectedPosition, FeedAdapter.ACTION_STOP);
             mSelectedPosition = selectedPosition;
@@ -90,20 +98,24 @@ public class MainActivity extends AppCompatActivity {
         mFeedAdapter.notifyItemChanged(this.mSelectedPosition, event);
     }
 
-    private class ScrollListener extends RecyclerView.OnScrollListener {
-
-        @Override
-        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-            super.onScrollStateChanged(recyclerView, newState);
-            if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                calculateTopItemAndUpdateRecycler(recyclerView);
-            }
-
-            if (newState == RecyclerView.SCROLL_STATE_SETTLING
-                    || newState == RecyclerView.SCROLL_STATE_DRAGGING) {
-                updateList(FeedAdapter.POSITION_NONE);
-            }
-        }
-    }
+//    private class ScrollListener extends RecyclerView.OnScrollListener {
+//
+//        @Override
+//        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+//            super.onScrollStateChanged(recyclerView, newState);
+//
+//            // currently not scrolling
+//            if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+//                Log.i("HYUNJOO","onScrollStateChanged - clicked position: " + mFeedAdapter.getClickedPosition() );
+//                calculateTopItemAndUpdateRecycler(recyclerView);
+//            }
+//
+//            // currently scrolling
+//            if (newState == RecyclerView.SCROLL_STATE_SETTLING
+//                    || newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+//                updateList(FeedAdapter.POSITION_NONE);
+//            }
+//        }
+//    }
 
 }

@@ -3,27 +3,49 @@ package com.example.roman_heshten.twitterlikefeedwithsdk;
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
 
 import com.longtailvideo.jwplayer.JWPlayerView;
 import com.longtailvideo.jwplayer.configuration.PlayerConfig;
 import com.longtailvideo.jwplayer.core.PlayerState;
 
 
-public class FeedViewHolder extends RecyclerView.ViewHolder {
+public class FeedViewHolder extends RecyclerView.ViewHolder{
 
     private JWPlayerView mPlayerView;
+    private View mRoot;
+    private Button button;
+    private final String TAG = "HYUNJOO";
 
     FeedViewHolder(View itemView) {
         super(itemView);
+        mRoot = itemView;
         mPlayerView = itemView.findViewById(R.id.jw_player);
+        button = itemView.findViewById(R.id.button);
     }
 
-    public void bindViewHolder(final Feed feed, boolean isActive) {
+//    public void bindViewHolder(final Feed feed, boolean isActive) {
+//        updateBackground(isActive);
+//        if (isActive) {
+//            setupPlayer(feed.getVideoConfig());
+//        } else {
+//            stopPlayer();
+//        }
+//    }
+
+    public void bindViewHolder(final Feed feed, boolean isActive, final int curr) {
         updateBackground(isActive);
-        if (isActive) {
-            setupPlayer(feed.getVideoConfig());
-        } else {
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity.updateList(curr);
+                setupPlayer(feed.getVideoConfig());
+            }
+        });
+        if (!isActive) {
             stopPlayer();
         }
     }

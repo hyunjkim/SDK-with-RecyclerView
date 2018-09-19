@@ -12,7 +12,7 @@
 
         <meta-data
             android:name="JW_LICENSE_KEY"
-            android:value="YOUR_KEY" />
+            android:value="" />
 
         <activity android:name=".MainActivity">
             <intent-filter>
