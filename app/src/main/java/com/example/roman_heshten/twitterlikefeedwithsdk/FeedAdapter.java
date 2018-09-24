@@ -2,18 +2,24 @@ package com.example.roman_heshten.twitterlikefeedwithsdk;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+
+import com.longtailvideo.jwplayer.JWPlayerView;
 
 import java.util.List;
+
+import static com.example.roman_heshten.twitterlikefeedwithsdk.MainActivity.updateList;
 
 /**
  * Adapter that binds {@link FeedViewHolder}
  *
  * */
-public class FeedAdapter extends RecyclerView.Adapter<FeedViewHolder>{
-
+public class FeedAdapter extends RecyclerView.Adapter<FeedViewHolder> implements MainActivity.ItemPickedListener{
     /**
      * Magic number
      *
@@ -29,8 +35,9 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedViewHolder>{
 
     private List<Feed> mFeedList;
 
-    private int mActivePosition;
-    private final String TAG = "HYUNJOO";
+    private int mActivePosition = -1;
+    private boolean itemSelected;
+    private View feedView;
 
     FeedAdapter(List<Feed> feed, int activePosition) {
         mFeedList = feed;
@@ -41,15 +48,17 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedViewHolder>{
     @Override
     public FeedViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View feedView = layoutInflater.inflate(R.layout.feed_view, parent, false);
+        feedView = layoutInflater.inflate(R.layout.feed_view, parent, false);
         return new FeedViewHolder(feedView);
     }
 
     @Override
     public void onBindViewHolder(@NonNull final FeedViewHolder holder, int position) {
-        final boolean isActive = mActivePosition == holder.getAdapterPosition();
-        int selectedPosition = holder.getAdapterPosition();
-        holder.bindViewHolder(mFeedList.get(selectedPosition), isActive, selectedPosition);
+        int holderSelectedPosition = holder.getAdapterPosition();
+        final boolean isActive = mActivePosition == holderSelectedPosition;
+        Log.i("HYUNJOO", "Adapter position: " + holderSelectedPosition + " setActivePos: " + mActivePosition);
+        if(itemSelected) updateList(holderSelectedPosition);
+        holder.bindViewHolder(mFeedList.get(holderSelectedPosition), isActive, holderSelectedPosition);
     }
 
     @Override
@@ -85,4 +94,8 @@ public class FeedAdapter extends RecyclerView.Adapter<FeedViewHolder>{
         mActivePosition = activePosition;
     }
 
+    @Override
+    public void isPicked(boolean picked) {
+        itemSelected = picked;
+    }
 }

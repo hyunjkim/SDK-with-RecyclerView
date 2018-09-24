@@ -1,30 +1,32 @@
 package com.example.roman_heshten.twitterlikefeedwithsdk;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.longtailvideo.jwplayer.JWPlayerView;
 import com.longtailvideo.jwplayer.configuration.PlayerConfig;
 import com.longtailvideo.jwplayer.core.PlayerState;
+import com.longtailvideo.jwplayer.events.DisplayClickEvent;
+import com.longtailvideo.jwplayer.events.listeners.VideoPlayerEvents;
+
+import static com.example.roman_heshten.twitterlikefeedwithsdk.MainActivity.updateList;
 
 
 public class FeedViewHolder extends RecyclerView.ViewHolder{
 
     private JWPlayerView mPlayerView;
-    private View mRoot;
-    private Button button;
-    private final String TAG = "HYUNJOO";
 
+    private View mItemView;
     FeedViewHolder(View itemView) {
         super(itemView);
-        mRoot = itemView;
+        mItemView = itemView;
         mPlayerView = itemView.findViewById(R.id.jw_player);
-        button = itemView.findViewById(R.id.button);
     }
 
 //    public void bindViewHolder(final Feed feed, boolean isActive) {
@@ -36,18 +38,16 @@ public class FeedViewHolder extends RecyclerView.ViewHolder{
 //        }
 //    }
 
+    @SuppressLint("ClickableViewAccessibility")
     public void bindViewHolder(final Feed feed, boolean isActive, final int curr) {
-        updateBackground(isActive);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MainActivity.updateList(curr);
-                setupPlayer(feed.getVideoConfig());
-            }
-        });
-        if (!isActive) {
+        Log.i("HYUNJOO", "bindViewHolder " + isActive);
+        if(isActive) {
+            Log.i("HYUNJOO", "bindViewHolder selected pos: " + curr);
+            setupPlayer(feed.getVideoConfig());
+        } else {
             stopPlayer();
         }
+        updateBackground(isActive);
     }
 
     public void onResume() {

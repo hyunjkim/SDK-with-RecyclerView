@@ -1,21 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/framelayout"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:focusable="false"
     android:layout_width="match_parent"
     android:layout_height="200dp">
 
-    <Button
-        android:id="@+id/button"
-        android:text="play"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top|center_horizontal">
-
-    </Button>
     <com.longtailvideo.jwplayer.JWPlayerView
+        android:id="@+id/jw_player"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="4dp"
-        android:id="@+id/jw_player"/>
+        android:layout_margin="4dp"/>
 </FrameLayout>

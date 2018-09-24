@@ -8,6 +8,8 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.LinearLayout;
 
 import java.util.List;
 
@@ -17,8 +19,10 @@ public class MainActivity extends AppCompatActivity{
 
     private RecyclerView mRecyclerView;
 //    private ScrollListener mScrollListener;
-    private static int mSelectedPosition;
+    private static int mSelectedPosition = -1;
     private static FeedAdapter mFeedAdapter;
+
+    private ItemListener mItemListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,12 +66,15 @@ public class MainActivity extends AppCompatActivity{
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setAdapter(mFeedAdapter);
 //        mRecyclerView.addOnScrollListener(mScrollListener);
-
+        mItemListener = new ItemListener();
+        mRecyclerView.addOnItemTouchListener(mItemListener);
     }
 
     private void destroyInstances() {
         updateListWithLifecycleEvent(FeedAdapter.ACTION_LIFECYCLE_DESTROY);
         mRecyclerView.setAdapter(null);
+        mRecyclerView.removeOnItemTouchListener(mItemListener);
+        mItemListener = null;
 //        mRecyclerView.removeOnScrollListener(mScrollListener);
 //        mScrollListener = null;
     }
@@ -84,6 +91,8 @@ public class MainActivity extends AppCompatActivity{
     }
 
     public static void updateList(final int selectedPosition) {
+        Log.i("HYUNJOO",  "selected pos " + selectedPosition);
+        Log.i("HYUNJOO",  "Mselected pos " + mSelectedPosition);
         if (mSelectedPosition != selectedPosition) {
             mFeedAdapter.setActivePosition(selectedPosition);
             //add payloads to not call animation
@@ -95,7 +104,53 @@ public class MainActivity extends AppCompatActivity{
     }
 
     private void updateListWithLifecycleEvent(String event) {
-        mFeedAdapter.notifyItemChanged(this.mSelectedPosition, event);
+        mFeedAdapter.notifyItemChanged(mSelectedPosition, event);
+    }
+
+    /*
+    * https://developer.android.com/training/gestures/viewgroup
+    * */
+
+    public interface ItemPickedListener {
+        void isPicked(boolean isPick);
+    }
+
+    public class ItemListener implements RecyclerView.OnItemTouchListener{
+
+        @Override
+        public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+            View view = rv.findChildViewUnder(e.getX(),e.getY());
+            int layoutPosition = rv.getChildLayoutPosition(view);
+            boolean tooFast = rv.fling(100,200);
+
+            Log.i("HYUNJOO", "FLING VELOCITY " + tooFast);
+            switch(e.getAction()){
+                case MotionEvent.ACTION_DOWN:
+                    mFeedAdapter.isPicked(true);
+                    Log.i("HYUNJOO", "ACTION DOWN position: " + view);
+                    Log.i("HYUNJOO", "ACTION DOWN position: " + layoutPosition);
+                    updateList(layoutPosition);
+                    break;
+                case MotionEvent.ACTION_UP:
+                    mFeedAdapter.isPicked(true);
+                    Log.i("HYUNJOO", "ACTION UP position: " + view);
+                    Log.i("HYUNJOO", "ACTION UP position: " + layoutPosition);
+                    updateList(layoutPosition);
+                    break;
+            }
+            mFeedAdapter.isPicked(false);
+            return false;
+        }
+
+        @Override
+        public void onTouchEvent(RecyclerView rv, MotionEvent e) {
+            Log.i("HYUNJOO", "onTouch " + e.getAction());
+        }
+
+        @Override
+        public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
+        }
     }
 
 //    private class ScrollListener extends RecyclerView.OnScrollListener {
@@ -104,9 +159,8 @@ public class MainActivity extends AppCompatActivity{
 //        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
 //            super.onScrollStateChanged(recyclerView, newState);
 //
-//            // currently not scrolling
+//            // currently not scrolling & set the top view the active
 //            if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-//                Log.i("HYUNJOO","onScrollStateChanged - clicked position: " + mFeedAdapter.getClickedPosition() );
 //                calculateTopItemAndUpdateRecycler(recyclerView);
 //            }
 //
